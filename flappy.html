@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slow Flappy Bird</title>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #70c5ce; font-family: sans-serif; }
+        canvas { border: 2px solid #000; background: #fff; touch-action: none; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+    <p>Tap to jump!</p>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Decreased gravity (0.3) and lift (-6) to make it slower
+        let bird = { x: 50, y: 150, w: 20, h: 20, gravity: 0.3, lift: -6, velocity: 0 };
+        // Decreased pipe speed (1.5)
+        let pipe = { x: 320, w: 40, gap: 140, top: 150, speed: 1.5 };
+
+        function draw() {
+            ctx.fillStyle = "#70c5ce";
+            ctx.fillRect(0, 0, 320, 480);
+
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+
+            // Move pipes slower
+            pipe.x -= pipe.speed;
+            if (pipe.x < -40) { pipe.x = 320; pipe.top = Math.random() * 200 + 50; }
+            
+            ctx.fillStyle = "green";
+            ctx.fillRect(pipe.x, 0, pipe.w, pipe.top);
+            ctx.fillRect(pipe.x, pipe.top + pipe.gap, pipe.w, 480 - (pipe.top + pipe.gap));
+
+            // Collision check
+            if (bird.y > 480 || (bird.x + bird.w > pipe.x && bird.x < pipe.x + pipe.w && (bird.y < pipe.top || bird.y + bird.h > pipe.top + pipe.gap))) {
+                bird.y = 150; bird.velocity = 0; pipe.x = 320;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener("pointerdown", () => {
+            bird.velocity = bird.lift;
+        });
+
+        draw();
+    </script>
+</body>
+</html>
+
