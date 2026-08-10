@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -258,7 +259,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
       <p id="modalDescription"></p>
 
       <div class="action-btns">
-        <a id="watchMovieAnchor" class="btn-action watch-btn" href="#" target="_blank" rel="noopener noreferrer">▶ Watch Movie</a>
+        <a id="watchMovieAnchor" class="btn-action watch-btn" href="javascript:void(0)" onclick="openTeraboxLink()">▶ Watch Movie</a>
         <button class="btn-action watchlist-btn" id="watchlistToggleBtn" onclick="toggleWatchlist()">+ Watchlist</button>
       </div>
 
@@ -929,13 +930,6 @@ function openMovie(movie){
   
   const imgElement = document.getElementById("modalImage");
   const iframeElement = document.getElementById("modalTrailerFrame");
-  const watchAnchor = document.getElementById("watchMovieAnchor");
-
-  if(movie.terabox_url){
-    watchAnchor.href = movie.terabox_url;
-  } else {
-    watchAnchor.href = "#";
-  }
 
   let rawTrailer = movie.trailer_url || "";
   let youtubeId = "";
@@ -965,6 +959,16 @@ function openMovie(movie){
   const modal = document.getElementById("movieModal");
   modal.style.display = "flex";
   modal.querySelector('.modalBox').scrollTop = 0;
+}
+
+function openTeraboxLink(){
+  if(selectedMovie && selectedMovie.terabox_url){
+    let url = selectedMovie.terabox_url;
+    // టెరాబాక్స్ యాప్ లేదా బ్రౌజర్‌లో వైట్ స్క్రీన్ రాకుండా డైరెక్ట్ రీడైరెక్ట్ చేయడానికి
+    window.location.href = url;
+  } else {
+    alert("No TeraBox link provided.");
+  }
 }
 
 function renderSimilarMovies(currentMovie){
