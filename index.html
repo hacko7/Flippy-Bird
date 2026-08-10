@@ -259,7 +259,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
       <p id="modalDescription"></p>
 
       <div class="action-btns">
-        <a id="watchMovieAnchor" class="btn-action watch-btn" href="javascript:void(0)" onclick="openTeraboxLink()">▶ Watch Movie</a>
+        <a id="watchMovieAnchor" class="btn-action watch-btn" href="javascript:void(0)" onclick="handleWatchClick()">▶ Watch Movie</a>
         <button class="btn-action watchlist-btn" id="watchlistToggleBtn" onclick="toggleWatchlist()">+ Watchlist</button>
       </div>
 
@@ -297,7 +297,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
       <div id="secBanner" class="accordion-body">
         <div class="group"><label>Banner Title</label><input id="bannerTitle" placeholder="Banner movie/show title"></div>
         <div class="group"><label>Banner Description</label><textarea id="bannerDescription" placeholder="Banner description"></textarea></div>
-        <div class="group"><label>TeraBox Link</label><input id="bannerLink" placeholder="https://terabox..."></div>
+        <div class="group"><label>Video Link (TeraBox or Google Drive)</label><input id="bannerLink" placeholder="https://terabox... or https://drive.google.com/..."></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
         <div class="group">
           <label>Select New Hero Banner Image</label>
@@ -329,7 +329,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         </div>
 
         <div class="group"><label>Description</label><textarea id="movieDescription" placeholder="Movie description"></textarea></div>
-        <div class="group"><label>TeraBox Link</label><input id="movieLink" placeholder="https://terabox..."></div>
+        <div class="group"><label>Video Link (TeraBox or Google Drive)</label><input id="movieLink" placeholder="https://terabox... or https://drive.google.com/..."></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
         <div class="group">
           <label>Category Name</label>
@@ -800,7 +800,7 @@ async function addOrUpdateMovie(){
   const file = document.getElementById("movieImage").files[0];
 
   if(!title || !link){
-    alert("Please enter movie title and TeraBox link.");
+    alert("Please enter movie title and Video link.");
     return;
   }
 
@@ -961,13 +961,31 @@ function openMovie(movie){
   modal.querySelector('.modalBox').scrollTop = 0;
 }
 
-function openTeraboxLink(){
-  if(selectedMovie && selectedMovie.terabox_url){
-    let url = selectedMovie.terabox_url;
-    // టెరాబాక్స్ యాప్ లేదా బ్రౌజర్‌లో వైట్ స్క్రీన్ రాకుండా డైరెక్ట్ రీడైరెక్ట్ చేయడానికి
-    window.location.href = url;
+function handleWatchClick(){
+  if(!selectedMovie || !selectedMovie.terabox_url){
+    alert("No video link provided.");
+    return;
+  }
+
+  let url = selectedMovie.terabox_url;
+
+  // ఒకవేళ గూగుల్ డ్రైవ్ లింక్ అయితే వెబ్‌సైట్ లోపలే ప్లేయర్ లేదా డైరెక్ట్ ప్రివ్యూలో ఓపెన్ అవుతుంది
+  if(url.includes("drive.google.com")){
+    let embedUrl = url;
+    if(url.includes("/view")) {
+      embedUrl = url.replace("/view", "/preview");
+    } else if(!url.includes("/preview")) {
+      embedUrl = url + (url.endsWith("/") ? "" : "/") + "preview";
+    }
+    
+    const iframeElement = document.getElementById("modalTrailerFrame");
+    const imgElement = document.getElementById("modalImage");
+    imgElement.style.display = "none";
+    iframeElement.style.display = "block";
+    iframeElement.src = embedUrl;
   } else {
-    alert("No TeraBox link provided.");
+    // టెరాబాక్స్ లింక్ అయితే బయట యాప్/బ్రౌజర్‌కి రీడైరెక్ట్ అవుతుంది
+    window.location.href = url;
   }
 }
 
