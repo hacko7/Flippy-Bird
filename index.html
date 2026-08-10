@@ -7,8 +7,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+/* FONT & LAYOUT FIX FOR MOBILE / IN-APP BROWSERS */
+*{ 
+  box-sizing:border-box; 
+  margin:0; 
+  padding:0; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
+}
 body{ background:#05070b; color:white; }
+
 header{ height:65px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#080b10; border-bottom:1px solid #202933; position:sticky; top:0; z-index:50; }
 .logo{ color:#00a8ff; font-size:20px; font-weight:bold; }
 .logo span{ color:white; }
@@ -33,7 +40,7 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .sidebar-menu-list button{ width:100%; text-align:left; background:none; border:none; color:#e1e6eb; padding:12px 10px; border-radius:6px; font-size:15px; cursor:pointer; display:flex; align-items:center; gap:10px; }
 .sidebar-menu-list button:hover{ background:#121820; color:#00a8ff; }
 
-/* SUBMENU BOX STYLES (CATEGORIES, LANGUAGES, YEARS) */
+/* SUBMENU STYLES */
 .category-submenu { 
   display: none; 
   flex-wrap: wrap; 
@@ -58,23 +65,21 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
   color: white !important; 
   border-color: #00a8ff !important;
 }
-.category-submenu button.active-cat {
-  background: #00a8ff !important;
-  border-color: #00a8ff !important;
-}
 
+/* FIXED HERO BANNER DISPLAY */
 .hero{ 
-  height:280px; 
+  min-height:280px; 
   display:flex; 
   align-items:flex-end; 
   padding:25px 18px; 
-  background-position: center;
+  background-position: center center;
   background-size: cover;
-  transition: background-image 1s ease-in-out;
-  background-image: linear-gradient(to top,#05070b 5%,transparent 75%),linear-gradient(to right,#05070b,transparent 75%),url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80");
+  background-repeat: no-repeat;
+  transition: background-image 0.5s ease-in-out;
+  background-image: linear-gradient(to top, rgba(5,7,11,1) 5%, rgba(5,7,11,0.4) 75%), linear-gradient(to right, rgba(5,7,11,1), rgba(5,7,11,0.2) 75%), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80");
 }
-.hero h1{ font-size:32px; margin-bottom:8px; }
-.hero p{ color:#b5bdc7; }
+.hero h1{ font-size:28px; margin-bottom:8px; font-weight:700; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+.hero p{ color:#b5bdc7; font-size:14px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
 .hero button{ margin-top:15px; padding:12px 20px; border:0; border-radius:7px; background:#00a8ff; color:white; font-weight:bold; cursor:pointer; }
 
 .section{ padding:20px 14px; }
@@ -86,7 +91,7 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .row::-webkit-scrollbar{ display:none; }
 .movie{ width:140px; min-width:140px; cursor:pointer; }
 .poster{ width:140px; height:210px; object-fit:cover; border-radius:9px; background:#111820; }
-.movieName{ margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.movieName{ margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
 .movieMeta{ color:#78838e; font-size:11px; margin-top:4px; text-transform:capitalize; }
 
 .modal, .admin, .category-page{ position:fixed; inset:0; display:none; background:rgba(0,0,0,.92); z-index:100; }
@@ -495,7 +500,7 @@ function applyBannerMovie(movieData){
   
   const bgUrl = movieData.hero_banner || movieData.thumbnail_url;
   if(bgUrl) {
-    hero.style.backgroundImage = `linear-gradient(to top,#05070b 5%,transparent 75%),linear-gradient(to right,#05070b,transparent 75%),url("${bgUrl}")`;
+    hero.style.backgroundImage = `linear-gradient(to top, rgba(5,7,11,1) 5%, rgba(5,7,11,0.4) 75%), linear-gradient(to right, rgba(5,7,11,1), rgba(5,7,11,0.2) 75%), url("${bgUrl}")`;
   }
   
   if(movieData.title) {
@@ -588,9 +593,7 @@ async function loadMovies(){
   renderMovies();
 }
 
-// DYNAMIC SUBMENUS FOR CATEGORIES, LANGUAGES, AND YEARS
 function renderMenuSubmenus(){
-  // 1. Categories
   const catSubmenu = document.getElementById("categorySubmenu");
   catSubmenu.innerHTML = "";
   const categories = [...new Set(movies.map(m => m.category ? m.category.toLowerCase().trim() : "").filter(Boolean))];
@@ -604,7 +607,6 @@ function renderMenuSubmenus(){
     catSubmenu.appendChild(btn);
   });
 
-  // 2. Languages
   const langSubmenu = document.getElementById("languageSubmenu");
   langSubmenu.innerHTML = "";
   const languages = [...new Set(movies.map(m => m.language ? m.language.toLowerCase().trim() : "").filter(Boolean))];
@@ -618,7 +620,6 @@ function renderMenuSubmenus(){
     langSubmenu.appendChild(btn);
   });
 
-  // 3. Years
   const yearSubmenu = document.getElementById("yearSubmenu");
   yearSubmenu.innerHTML = "";
   const years = [...new Set(movies.map(m => m.year ? m.year.toString().trim() : "").filter(Boolean))];
@@ -640,7 +641,6 @@ function showAllHomeMovies(){
   renderMovies();
 }
 
-/* FIXED CATEGORY ORDER: 1. TRENDING, 2. NEW RELEASED */
 function renderMovies(){
   const container = document.getElementById("dynamicCategoriesContainer");
   container.innerHTML = "";
@@ -995,7 +995,7 @@ function closeMovie(){
   iframeElement.style.display = "none";
 }
 
-/* TeraBox లోనే డైరెక్ట్‌గా లోడ్ అవ్వడానికి మార్చిన openLink Function */
+/* FIXED TERABOX IN-APP OPENING */
 function openLink(){ 
   if(selectedMovie && selectedMovie.terabox_url){
     window.location.href = selectedMovie.terabox_url; 
@@ -1064,7 +1064,8 @@ document.getElementById("search").addEventListener("input", function(){
   if(matches.length > 0){
     sugBox.style.display = "block";
     matches.forEach(movie => {
-      const item.className = "suggestion-item";
+      const item = document.createElement("div");
+      item.className = "suggestion-item";
       item.textContent = movie.title;
       item.onclick = function(){
         openMovie(movie);
