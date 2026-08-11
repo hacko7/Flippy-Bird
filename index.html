@@ -295,15 +295,23 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         <span id="iconBanner" class="accordion-icon">▼</span>
       </div>
       <div id="secBanner" class="accordion-body">
+        <input type="hidden" id="editBannerId">
         <div class="group"><label>Banner Title</label><input id="bannerTitle" placeholder="Banner movie/show title"></div>
         <div class="group"><label>Banner Link (OTT or Video link)</label><input id="bannerLink" placeholder="Paste OTT / Video link here..."></div>
+        
+        <div class="group">
+          <label>Watch In (e.g. Netflix, Aha, MX Player, TeraBox)</label>
+          <input id="bannerWatchIn" placeholder="Enter platform name...">
+        </div>
+
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
         <div class="group">
           <label>Select New Hero Banner Image</label>
           <input id="bannerImage" type="file" accept="image/*">
           <img id="bannerPreview" class="banner-preview">
         </div>
-        <button class="updateBannerBtn" onclick="updateBanner()">🖼️ Add Banner Slide</button>
+        <button id="saveBannerBtn" class="updateBannerBtn" onclick="addOrUpdateBanner()">🖼️ Add Banner Slide</button>
+        <button id="cancelBannerEditBtn" class="cancelBtn" onclick="resetBannerForm()">✕ Cancel Edit</button>
       </div>
     </div>
 
@@ -518,47 +526,106 @@ function watchCurrentBanner(){
   }
 }
 
-async function updateBanner(){
+function resetBannerForm() {
+  document.getElementById("editBannerId").value = "";
+  document.getElementById("bannerTitle").value = "";
+  document.getElementById("bannerLink").value = "";
+  document.getElementById("bannerWatchIn").value = "";
+  document.getElementById("bannerTrailer").value = "";
+  document.getElementById("bannerImage").value = "";
+  document.getElementById("bannerPreview").style.display = "none";
+
+  document.getElementById("saveBannerBtn").textContent = "🖼️ Add Banner Slide";
+  document.getElementById("cancelBannerEditBtn").style.display = "none";
+}
+
+function startEditBanner(id) {
+  const item = allDbItems.find(m => String(m.id) === String(id));
+  if(!item) return;
+
+  document.getElementById("editBannerId").value = item.id;
+  document.getElementById("bannerTitle").value = item.title || "";
+  document.getElementById("bannerLink").value = item.terabox_url || "";
+  document.getElementById("bannerWatchIn").value = item.watch_in || "";
+  document.getElementById("bannerTrailer").value = item.trailer_url || "";
+
+  const preview = document.getElementById("bannerPreview");
+  preview.src = item.thumbnail_url;
+  preview.style.display = "block";
+
+  document.getElementById("saveBannerBtn").textContent = "💾 Update Banner Slide";
+  document.getElementById("cancelBannerEditBtn").style.display = "block";
+
+  const secBanner = document.getElementById("secBanner");
+  const iconBanner = document.getElementById("iconBanner");
+  secBanner.style.display = "block";
+  iconBanner.textContent = "▲";
+  secBanner.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function addOrUpdateBanner(){
+  const editId = document.getElementById("editBannerId").value;
   const title = document.getElementById("bannerTitle").value.trim() || "Featured Banner";
   const link = document.getElementById("bannerLink").value.trim() || "#";
+  const watchIn = document.getElementById("bannerWatchIn").value.trim();
   const trailer = document.getElementById("bannerTrailer").value.trim();
   const file = document.getElementById("bannerImage").files[0];
 
-  if(!file){
+  if(!editId && !file){
     alert("Please select a new banner image.");
     return;
   }
 
   try {
-    document.getElementById("status").textContent = "Uploading banner...";
-    const extension = file.name.split(".").pop();
-    const filename = "hero-banner-" + Date.now() + "." + extension;
+    let bannerUrl = null;
+    if(file){
+      document.getElementById("status").textContent = "Uploading banner...";
+      const extension = file.name.split(".").pop();
+      const filename = "hero-banner-" + Date.now() + "." + extension;
 
-    const upload = await db.storage.from("posters").upload(filename, file, {upsert: true});
-    if(upload.error) throw upload.error;
+      const upload = await db.storage.from("posters").upload(filename, file, {upsert: true});
+      if(upload.error) throw upload.error;
 
-    const bannerUrl = db.storage.from("posters").getPublicUrl(filename).data.publicUrl;
-    
-    document.getElementById("status").textContent = "Saving to Database...";
+      bannerUrl = db.storage.from("posters").getPublicUrl(filename).data.publicUrl;
+    }
 
-    const insertResult = await db.from("movies").insert({
-      title: title,
-      description: "",
-      thumbnail_url: bannerUrl,
-      hero_banner: bannerUrl,
-      terabox_url: link,
-      trailer_url: trailer,
-      category: "banner"
-    });
+    if(editId) {
+      document.getElementById("status").textContent = "Updating banner...";
+      const existingItem = allDbItems.find(m => String(m.id) === String(editId));
+      const updatedUrl = bannerUrl || (existingItem ? existingItem.thumbnail_url : "");
 
-    if(insertResult.error) throw insertResult.error;
+      const updateData = {
+        title: title,
+        description: "",
+        thumbnail_url: updatedUrl,
+        hero_banner: updatedUrl,
+        terabox_url: link,
+        watch_in: watchIn,
+        trailer_url: trailer,
+        category: "banner"
+      };
 
-    document.getElementById("status").textContent = "✅ Banner Added Successfully!";
-    document.getElementById("bannerTitle").value = "";
-    document.getElementById("bannerLink").value = "";
-    document.getElementById("bannerTrailer").value = "";
-    document.getElementById("bannerImage").value = "";
-    document.getElementById("bannerPreview").style.display = "none";
+      const { error } = await db.from("movies").update(updateData).eq("id", editId).select();
+      if(error) throw error;
+      document.getElementById("status").textContent = "✅ Banner Updated Successfully!";
+    } else {
+      document.getElementById("status").textContent = "Saving to Database...";
+      const { error } = await db.from("movies").insert({
+        title: title,
+        description: "",
+        thumbnail_url: bannerUrl,
+        hero_banner: bannerUrl,
+        terabox_url: link,
+        watch_in: watchIn,
+        trailer_url: trailer,
+        category: "banner"
+      });
+
+      if(error) throw error;
+      document.getElementById("status").textContent = "✅ Banner Added Successfully!";
+    }
+
+    resetBannerForm();
     await loadMovies();
   } catch(error) {
     console.error(error);
@@ -831,7 +898,6 @@ async function addOrUpdateMovie(){
 
     if(editId) {
       document.getElementById("status").textContent = "Updating movie details...";
-      
       const existingItem = allDbItems.find(m => String(m.id) === String(editId));
       const updatedUrl = publicURL || (existingItem ? existingItem.thumbnail_url : "");
 
@@ -848,13 +914,12 @@ async function addOrUpdateMovie(){
         category: category
       };
 
-      const { data, error } = await db.from("movies").update(updateData).eq("id", editId).select();
-
+      const { error } = await db.from("movies").update(updateData).eq("id", editId).select();
       if(error) throw error;
       document.getElementById("status").textContent = "✅ Movie Updated Successfully!";
     } else {
       document.getElementById("status").textContent = "Saving movie...";
-      const { data, error } = await db.from("movies").insert({
+      const { error } = await db.from("movies").insert({
         title: title,
         language: language,
         year: year,
@@ -892,15 +957,16 @@ function renderAdmin(itemsList){
     const div = document.createElement("div");
     div.className = "adminItem";
     const subMeta = [item.language, item.year].filter(Boolean).join(" | ");
+    const isBanner = item.category === "banner";
     
     div.innerHTML = `
       <img class="adminThumb" src="${item.thumbnail_url}">
       <div class="adminInfo">
         <strong>${escapeHTML(item.title)}</strong><br>
-        <small style="color:#aab3bd;">${item.category === "banner" ? "🖼️ BANNER SLIDE" : escapeHTML(item.category)}${subMeta ? ' • ' + escapeHTML(subMeta) : ''}</small>
+        <small style="color:#aab3bd;">${isBanner ? "🖼️ BANNER SLIDE" : escapeHTML(item.category)}${subMeta ? ' • ' + escapeHTML(subMeta) : ''}</small>
       </div>
       <div class="adminBtns">
-        <button class="editBtn" onclick="startEditMovie('${item.id}')">Edit</button>
+        <button class="editBtn" onclick="${isBanner ? `startEditBanner('${item.id}')` : `startEditMovie('${item.id}')`}">Edit</button>
         <button class="delete" onclick="deleteItem('${item.id}')">Delete</button>
       </div>
     `;
@@ -1088,7 +1154,7 @@ function renderWatchlist(){
       <span class="playlist-title">${escapeHTML(m.title)}</span>
       <button class="delete-btn" onclick="removeFromWatchlist('${m.id}')">Delete</button>
     `;
-    box.item.appendChild(item); // Note: fixed item.appendChild reference contextually
+    box.appendChild(item);
   });
 }
 
