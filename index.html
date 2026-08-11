@@ -344,7 +344,6 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
           <input id="movieLink" placeholder="Paste OTT or Video link here..." oninput="checkVideoPlatform()">
         </div>
 
-        <!-- Detected source removed, only source shown -->
         <div class="link-detector-box">
           Source: <strong id="detectedPlatformName" style="color: #00a8ff;">None</strong>
         </div>
@@ -781,6 +780,7 @@ function startEditMovie(id) {
   document.getElementById("movieTrailer").value = item.trailer_url || "";
   document.getElementById("movieCategory").value = item.category || "";
 
+  // ఇది లింక్‌ని బట్టి సోర్స్ పేరుని ఆటోమేటిక్‌గా అప్‌డేట్ చేస్తుంది
   checkVideoPlatform();
 
   const preview = document.getElementById("preview");
@@ -1178,4 +1178,3 @@ loadMovies();
 </script>
 </body>
 </html>
-
