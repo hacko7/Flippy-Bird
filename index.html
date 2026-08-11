@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -146,19 +147,6 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .cancelBtn{ background:#7f8c8d; width:100%; padding:10px; border:0; border-radius:8px; color:white; font-weight:bold; cursor:pointer; margin-top:5px; display:none; }
 .status{ margin-top:12px; padding:10px; background:#111820; border-radius:7px; color:#aeb6bf; }
 
-.link-detector-box {
-  background: #131d28;
-  border: 1px dashed #00a8ff;
-  border-radius: 8px;
-  padding: 10px 14px;
-  margin-bottom: 15px;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #aab3bd;
-}
-
 .admin-card-section{ background:#101721; border-radius:10px; border:1px solid #202933; margin-bottom:15px; overflow:hidden; }
 .accordion-header{ display:flex; justify-content:space-between; align-items:center; padding:15px; cursor:pointer; user-select:none; }
 .accordion-header h3{ font-size:16px; margin:0; }
@@ -264,7 +252,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
       <h2 id="modalTitle"></h2>
       
       <div class="meta-tags">
-        <span>HD Quality</span>
+        <span id="modalWatchIn">HD Quality</span>
         <span id="modalYear">2026</span>
         <span id="modalLanguage">Telugu</span>
         <span id="modalCategory">Movie</span>
@@ -341,11 +329,12 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
 
         <div class="group">
           <label>Video Link (Netflix, Prime, Aha, Hotstar, TeraBox, Drive, etc.)</label>
-          <input id="movieLink" placeholder="Paste OTT or Video link here..." oninput="checkVideoPlatform()">
+          <input id="movieLink" placeholder="Paste OTT or Video link here...">
         </div>
 
-        <div class="link-detector-box">
-          Source: <strong id="detectedPlatformName" style="color: #00a8ff;">None</strong>
+        <div class="group">
+          <label>Watch In (e.g. Netflix, Aha, MX Player, TeraBox)</label>
+          <input id="movieWatchIn" placeholder="Enter platform name...">
         </div>
 
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
@@ -491,17 +480,6 @@ document.getElementById("bannerImage").addEventListener("change", function(){
   };
   reader.readAsDataURL(file);
 });
-
-function checkVideoPlatform() {
-  const url = document.getElementById("movieLink").value.trim();
-  const detector = document.getElementById("detectedPlatformName");
-  if(!url) {
-    detector.textContent = "None";
-    return;
-  }
-  const name = getPlatformName(url);
-  detector.textContent = name;
-}
 
 function startBannerSlider(){
   if(bannerInterval) clearInterval(bannerInterval);
@@ -777,11 +755,9 @@ function startEditMovie(id) {
   document.getElementById("movieLanguage").value = item.language || "";
   document.getElementById("movieYear").value = item.year || "";
   document.getElementById("movieLink").value = item.terabox_url || "";
+  document.getElementById("movieWatchIn").value = item.watch_in || "";
   document.getElementById("movieTrailer").value = item.trailer_url || "";
   document.getElementById("movieCategory").value = item.category || "";
-
-  // ఇది లింక్‌ని బట్టి సోర్స్ పేరుని ఆటోమేటిక్‌గా అప్‌డేట్ చేస్తుంది
-  checkVideoPlatform();
 
   const preview = document.getElementById("preview");
   preview.src = item.thumbnail_url;
@@ -804,11 +780,10 @@ function resetMovieForm() {
   document.getElementById("movieLanguage").value = "";
   document.getElementById("movieYear").value = "";
   document.getElementById("movieLink").value = "";
+  document.getElementById("movieWatchIn").value = "";
   document.getElementById("movieTrailer").value = "";
   document.getElementById("movieCategory").value = "";
   document.getElementById("movieImage").value = "";
-  
-  checkVideoPlatform();
 
   const preview = document.getElementById("preview");
   preview.src = "";
@@ -825,6 +800,7 @@ async function addOrUpdateMovie(){
   const language = document.getElementById("movieLanguage").value.trim();
   const year = document.getElementById("movieYear").value.trim();
   const link = document.getElementById("movieLink").value.trim();
+  const watchIn = document.getElementById("movieWatchIn").value.trim();
   const trailer = document.getElementById("movieTrailer").value.trim();
   const category = document.getElementById("movieCategory").value.trim().toLowerCase() || "general";
   const file = document.getElementById("movieImage").files[0];
@@ -867,6 +843,7 @@ async function addOrUpdateMovie(){
         thumbnail_url: updatedUrl,
         hero_banner: updatedUrl,
         terabox_url: link,
+        watch_in: watchIn,
         trailer_url: trailer,
         category: category
       };
@@ -885,6 +862,7 @@ async function addOrUpdateMovie(){
         thumbnail_url: publicURL,
         hero_banner: publicURL,
         terabox_url: link,
+        watch_in: watchIn,
         trailer_url: trailer,
         category: category
       }).select();
@@ -948,25 +926,6 @@ async function deleteItem(id){
   await loadMovies();
 }
 
-function getPlatformName(url) {
-  if (!url) return "None";
-  const lower = url.toLowerCase();
-  if (lower.includes("netflix")) return "Netflix";
-  if (lower.includes("primevideo") || lower.includes("amazon")) return "Amazon Prime";
-  if (lower.includes("aha.video") || lower.includes("aha")) return "Aha";
-  if (lower.includes("hotstar") || lower.includes("disneyplus")) return "Disney+ Hotstar";
-  if (lower.includes("zee5")) return "ZEE5";
-  if (lower.includes("sonyliv")) return "SonyLIV";
-  if (lower.includes("jiocinema") || lower.includes("jio")) return "JioCinema";
-  if (lower.includes("terabox")) return "TeraBox";
-  if (lower.includes("vimeo")) return "Vimeo";
-  if (lower.includes("dailymotion") || lower.includes("dai.ly")) return "Dailymotion";
-  if (lower.includes("archive.org")) return "Archive";
-  if (lower.includes("drive.google.com")) return "Google Drive";
-  if (lower.includes("youtube.com") || lower.includes("youtu.be")) return "YouTube";
-  return "Custom OTT / Web Link";
-}
-
 function openMovie(movie){
   selectedMovie = movie;
   document.getElementById("modalTitle").textContent = movie.title;
@@ -974,6 +933,7 @@ function openMovie(movie){
   
   document.getElementById("modalLanguage").textContent = movie.language || "Telugu";
   document.getElementById("modalYear").textContent = movie.year || "2026";
+  document.getElementById("modalWatchIn").textContent = movie.watch_in || "HD Quality";
   
   const imgElement = document.getElementById("modalImage");
   const iframeElement = document.getElementById("modalTrailerFrame");
@@ -1128,7 +1088,7 @@ function renderWatchlist(){
       <span class="playlist-title">${escapeHTML(m.title)}</span>
       <button class="delete-btn" onclick="removeFromWatchlist('${m.id}')">Delete</button>
     `;
-    box.appendChild(item);
+    box.item.appendChild(item); // Note: fixed item.appendChild reference contextually
   });
 }
 
