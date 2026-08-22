@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,19 +18,16 @@
     .btn-secondary { background: #334155; color: #fff; }
     .btn-secondary:hover { background: #475569; }
 
-    /* Hero Banner */
     .hero-banner { position: relative; width: 100%; height: 350px; background: #1e293b; overflow: hidden; display: flex; align-items: flex-end; }
     .hero-bg { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; opacity: 0.4; filter: blur(2px); }
     .hero-content { position: relative; z-index: 2; padding: 30px; background: linear-gradient(to top, rgba(15,23,42,1), transparent); width: 100%; }
     .hero-title { font-size: 32px; font-weight: bold; margin-bottom: 10px; color: #fff; }
 
-    /* Controls Container */
     .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
     .controls { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
     .search-input, .filter-select { padding: 12px 15px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 15px; outline: none; }
     .search-input { flex: 1; min-width: 200px; }
 
-    /* Movie Cards Grid */
     .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
     .movie-card { background: #1e293b; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #334155; position: relative; }
     .movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
@@ -38,10 +36,8 @@
     .movie-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .movie-genre { font-size: 12px; color: #94a3b8; margin-top: 4px; }
 
-    /* Watchlist Badge */
     .watchlist-btn { position: absolute; top: 10px; right: 10px; background: rgba(15,23,42,0.8); border: none; color: #fff; padding: 6px 10px; border-radius: 20px; font-size: 12px; cursor: pointer; backdrop-filter: blur(4px); }
 
-    /* Modal / Player Styling */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: #1e293b; width: 90%; max-width: 800px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #334155; max-height: 90vh; overflow-y: auto; }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 28px; cursor: pointer; z-index: 10; }
@@ -54,13 +50,11 @@
     .play-btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; }
     .play-btn:hover { background: #0284c7; color: #fff; }
 
-    /* Admin Form Styling */
     .admin-form { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
     .admin-form input, .admin-form select { padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; }
   </style>
 </head>
 <body>
-
   <header>
     <h1 onclick="showAllMovies()">HACKO MOVIES</h1>
     <div class="nav-btns">
@@ -69,7 +63,6 @@
     </div>
   </header>
 
-  <!-- Dynamic Featured Banner -->
   <div class="hero-banner" id="heroBanner" style="display: none;">
     <img id="heroBg" class="hero-bg" src="" alt="Hero Banner">
     <div class="hero-content">
@@ -79,7 +72,6 @@
   </div>
 
   <div class="container">
-    <!-- Controls Section -->
     <div class="controls">
       <input type="text" id="searchInput" class="search-input" placeholder="Search movies..." oninput="filterMovies()">
       <select id="genreFilter" class="filter-select" onchange="filterMovies()">
@@ -91,11 +83,9 @@
       </select>
     </div>
 
-    <!-- Movie Grid -->
     <div class="movie-grid" id="movieGrid"></div>
   </div>
 
-  <!-- Movie Player Modal -->
   <div class="modal" id="movieModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -113,7 +103,6 @@
     </div>
   </div>
 
-  <!-- Admin Panel Modal -->
   <div class="modal" id="adminModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeAdminModal()">&times;</span>
@@ -127,9 +116,8 @@
       </div>
     </div>
   </div>
-
+  
   <script>
-    // Supabase Configuration
     const SUPABASE_URL = "https://ubgozfincybhmdzstgdh.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InViZ296ZmluY3liaG1kenN0Z2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyNDc1MjksImV4cCI6MjEwMTgyMzUyOX0.5fQKsV3tv9x76aQ6pB9IQ85SBPtPOszWy8Or-RJD41A";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -138,7 +126,6 @@
     let selectedMovie = null;
     let watchlist = JSON.parse(localStorage.getItem("hacko_watchlist")) || [];
 
-    // Fetch Movies from Supabase
     async function fetchMovies() {
       const { data, error } = await supabase.from('movies').select('*').order('id', { ascending: false });
       if (error) {
@@ -151,7 +138,6 @@
       updateWatchlistCount();
     }
 
-    // Render Grid
     function renderMovies(data) {
       const grid = document.getElementById("movieGrid");
       grid.innerHTML = "";
@@ -179,7 +165,6 @@
       });
     }
 
-    // Filter Logic
     function filterMovies() {
       const query = document.getElementById("searchInput").value.toLowerCase();
       const selectedGenre = document.getElementById("genreFilter").value;
@@ -193,7 +178,6 @@
       renderMovies(filtered);
     }
 
-    // Hero Banner Setup
     function setupHeroBanner() {
       if(moviesData.length > 0) {
         const featured = moviesData[0];
@@ -204,7 +188,6 @@
       }
     }
 
-    // Open Player Modal
     function openModal(movieId) {
       selectedMovie = moviesData.find(m => m.id === movieId);
       if(!selectedMovie) return;
@@ -227,7 +210,6 @@
       iframe.src = "";
     }
 
-    // Vercel Streamer Video Player Link Update
     function openLink() {
       if (!selectedMovie || !selectedMovie.terabox_url) {
         alert("No video File ID available for this movie.");
@@ -248,7 +230,6 @@
       iframeElement.src = embedUrl;
     }
 
-    // Watchlist Logic
     function toggleWatchlist(e, movieId) {
       e.stopPropagation();
       const movie = moviesData.find(m => m.id === movieId);
@@ -269,15 +250,9 @@
       document.getElementById("watchCount").innerText = watchlist.length;
     }
 
-    function showWatchlist() {
-      renderMovies(watchlist);
-    }
+    function showWatchlist() { renderMovies(watchlist); }
+    function showAllMovies() { renderMovies(moviesData); }
 
-    function showAllMovies() {
-      renderMovies(moviesData);
-    }
-
-    // Admin Panel Actions
     function openAdminModal() { document.getElementById("adminModal").style.display = "flex"; }
     function closeAdminModal() { document.getElementById("adminModal").style.display = "none"; }
 
@@ -305,18 +280,10 @@
       }
     }
 
-    // Initial Load
     fetchMovies();
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 
