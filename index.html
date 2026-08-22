@@ -220,7 +220,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
 
     <div class="modalMediaContainer">
       <img id="modalImage" class="modalImage" src="">
-      <iframe id="modalTrailerFrame" class="modalIframe" src="" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+      <iframe id="modalTrailerFrame" class="modalIframe" src="" allow="autoplay; encrypted-media; fullscreen" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" allowfullscreen></iframe>
     </div>
 
     <div class="modalContent">
@@ -276,7 +276,6 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         <div class="group"><label>Banner Title</label><input id="bannerTitle" placeholder="Banner movie/show title"></div>
         <div class="group"><label>Banner Description</label><textarea id="bannerDescription" placeholder="Banner description"></textarea></div>
         <div class="group"><label>DoodStream Link (Embed / Direct Link)</label><input id="bannerLink" placeholder="Paste Doodstream URL"></div>
-        <div class="group"><label>Terabox Backup Link (Optional)</label><input id="bannerBackupLink" placeholder="Paste Terabox original link"></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Select New Hero Banner Image</label>
@@ -308,8 +307,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         </div>
 
         <div class="group"><label>Description</label><textarea id="movieDescription" placeholder="Movie description"></textarea></div>
-        <div class="group"><label>Doodstream Link (e.g. https://dood.to/e/... or /f/...)</label><input id="movieLink" placeholder="Paste Doodstream Link"></div>
-        <div class="group"><label>Terabox Backup Link (Safe Storage Backup)</label><input id="movieBackupLink" placeholder="https://terabox.com/s/xxxxxxxx"></div>
+        <div class="group"><label>Doodstream / Playmogo Link</label><input id="movieLink" placeholder="Paste Stream Link"></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Category Name</label>
@@ -494,7 +492,6 @@ async function updateBanner(){
   const title = document.getElementById("bannerTitle").value.trim() || "Featured Banner";
   const description = document.getElementById("bannerDescription").value.trim();
   const link = document.getElementById("bannerLink").value.trim() || "#";
-  const backupLink = document.getElementById("bannerBackupLink").value.trim() || "";
   const trailer = document.getElementById("bannerTrailer").value.trim();
   const file = document.getElementById("bannerImage").files[0];
 
@@ -521,7 +518,6 @@ async function updateBanner(){
       thumbnail_url: bannerUrl,
       hero_banner: bannerUrl,
       terabox_url: link,
-      backup_url: backupLink,
       trailer_url: trailer,
       category: "banner"
     });
@@ -532,7 +528,6 @@ async function updateBanner(){
     document.getElementById("bannerTitle").value = "";
     document.getElementById("bannerDescription").value = "";
     document.getElementById("bannerLink").value = "";
-    document.getElementById("bannerBackupLink").value = "";
     document.getElementById("bannerTrailer").value = "";
     document.getElementById("bannerImage").value = "";
     document.getElementById("bannerPreview").style.display = "none";
@@ -733,7 +728,6 @@ function startEditMovie(id) {
   document.getElementById("movieYear").value = item.year || "";
   document.getElementById("movieDescription").value = item.description || "";
   document.getElementById("movieLink").value = item.terabox_url || "";
-  document.getElementById("movieBackupLink").value = item.backup_url || "";
   document.getElementById("movieTrailer").value = item.trailer_url || "";
   document.getElementById("movieCategory").value = item.category || "";
 
@@ -759,7 +753,6 @@ function resetMovieForm() {
   document.getElementById("movieYear").value = "";
   document.getElementById("movieDescription").value = "";
   document.getElementById("movieLink").value = "";
-  document.getElementById("movieBackupLink").value = "";
   document.getElementById("movieTrailer").value = "";
   document.getElementById("movieCategory").value = "";
   document.getElementById("movieImage").value = "";
@@ -780,13 +773,12 @@ async function addOrUpdateMovie(){
   const year = document.getElementById("movieYear").value.trim();
   const description = document.getElementById("movieDescription").value.trim();
   const link = document.getElementById("movieLink").value.trim();
-  const backupLink = document.getElementById("movieBackupLink").value.trim();
   const trailer = document.getElementById("movieTrailer").value.trim();
   const category = document.getElementById("movieCategory").value.trim().toLowerCase() || "general";
   const file = document.getElementById("movieImage").files[0];
 
   if(!title || !link){
-    alert("Please enter movie title and Doodstream Link.");
+    alert("Please enter movie title and Stream Link.");
     return;
   }
 
@@ -823,7 +815,6 @@ async function addOrUpdateMovie(){
         thumbnail_url: updatedUrl,
         hero_banner: updatedUrl,
         terabox_url: link,
-        backup_url: backupLink,
         trailer_url: trailer,
         category: category
       };
@@ -842,7 +833,6 @@ async function addOrUpdateMovie(){
         thumbnail_url: publicURL,
         hero_banner: publicURL,
         terabox_url: link,
-        backup_url: backupLink,
         trailer_url: trailer,
         category: category
       }).select();
@@ -919,18 +909,13 @@ function openMovie(movie){
   const imgElement = document.getElementById("modalImage");
   const iframeElement = document.getElementById("modalTrailerFrame");
 
-  // Reset display for modal poster
   iframeElement.style.display = "none";
   iframeElement.src = "";
   imgElement.style.display = "block";
   imgElement.src = movie.thumbnail_url;
 
   const backupBtn = document.getElementById("backupLinkBtn");
-  if(movie.backup_url) {
-    backupBtn.style.display = "flex";
-  } else {
-    backupBtn.style.display = "none";
-  }
+  backupBtn.style.display = "none";
 
   updateWatchlistBtn();
   renderSimilarMovies(movie);
@@ -948,25 +933,15 @@ function openLink(){
 
   let embedUrl = selectedMovie.terabox_url.trim();
 
-  // Doodstream links /f/ to /e/ auto conversion
-  if(embedUrl.includes("/f/")) {
+  // /d/ లేదా /f/ అని ఉంటే దాన్ని /e/ (Embed) గా మార్చడం
+  if(embedUrl.includes("/d/")) {
+    embedUrl = embedUrl.replace("/d/", "/e/");
+  } else if(embedUrl.includes("/f/")) {
     embedUrl = embedUrl.replace("/f/", "/e/");
   }
 
-  const iframeElement = document.getElementById("modalTrailerFrame");
-  const imgElement = document.getElementById("modalImage");
-
-  imgElement.style.display = "none";
-  iframeElement.style.display = "block";
-  iframeElement.src = embedUrl;
-}
-
-function openBackupLink(){
-  if(selectedMovie && selectedMovie.backup_url){
-    window.open(selectedMovie.backup_url, "_blank");
-  } else {
-    alert("No backup link available for this movie.");
-  }
+  // Doodstream & Playmogo డొమైన్‌లు కొత్త ట్యాబ్‌లో ఓపెన్ అయ్యేలా చేయడం (Block కాకుండా పక్కా ప్లే అవుతుంది)
+  window.open(embedUrl, "_blank");
 }
 
 function renderSimilarMovies(currentMovie){
