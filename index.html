@@ -86,7 +86,6 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .modalContent p{ color:#aab3bd; line-height:1.4; font-size:13px; margin-bottom:15px; }
 
 .action-btns{ display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
-.btn-row{ display:flex; gap:10px; }
 .btn-action{ flex:1; padding:12px; border:0; border-radius:7px; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; }
 .watch-btn{ background:#00a8ff; color:white; }
 .watchlist-btn{ background:#29323c; color:white; }
@@ -270,7 +269,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
       <div id="secBanner" class="accordion-body">
         <div class="group"><label>Banner Title</label><input id="bannerTitle" placeholder="Banner movie/show title"></div>
         <div class="group"><label>Banner Description</label><textarea id="bannerDescription" placeholder="Banner description"></textarea></div>
-        <div class="group"><label>Vidhide Stream Link (Embed Link)</label><input id="bannerLink" placeholder="e.g. https://vidhidepro.com/e/xxxxx"></div>
+        <div class="group"><label>TeraBox Stream Link</label><input id="bannerLink" placeholder="e.g. https://www.terabox.com/sharing/embed?surl=xxxxx"></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Select New Hero Banner Image</label>
@@ -302,7 +301,7 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         </div>
 
         <div class="group"><label>Description</label><textarea id="movieDescription" placeholder="Movie description"></textarea></div>
-        <div class="group"><label>Vidhide / Stream Link</label><input id="movieLink" placeholder="e.g. https://vidhidepro.com/e/xxxxx"></div>
+        <div class="group"><label>TeraBox Link</label><input id="movieLink" placeholder="e.g. https://terabox.com/s/xxxxx"></div>
         <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Category Name</label>
@@ -773,7 +772,7 @@ async function addOrUpdateMovie(){
   const file = document.getElementById("movieImage").files[0];
 
   if(!title || !link){
-    alert("Please enter movie title and Stream Link.");
+    alert("Please enter movie title and TeraBox Link.");
     return;
   }
 
@@ -917,27 +916,41 @@ function openMovie(movie){
   modal.querySelector('.modalBox').scrollTop = 0;
 }
 
-// Iframe లోనే Vidhide లేదా ఇతర వీడియోలు ప్లే అయ్యేలా చేసే ఫంక్షన్
-function openLink(){ 
+// TeraBox Video Player ఫంక్షన్
+async function openLink() { 
   if(!selectedMovie || !selectedMovie.terabox_url) {
-    alert("No stream URL available.");
+    alert("No TeraBox URL available.");
     return;
   }
 
-  let embedUrl = selectedMovie.terabox_url.trim();
-
-  // Vidhide లేదా ఇతర ప్లాట్‌ఫామ్‌ల URL ఆటో కన్వర్షన్ (/v/ నుండి /e/ లేదా embed format)
-  if(embedUrl.includes("/v/")) {
-    embedUrl = embedUrl.replace("/v/", "/e/");
-  } else if(embedUrl.includes("/d/")) {
-    embedUrl = embedUrl.replace("/d/", "/e/");
-  }
-
+  const rawUrl = selectedMovie.terabox_url.trim();
   const iframeElement = document.getElementById("modalTrailerFrame");
   const imgElement = document.getElementById("modalImage");
 
   imgElement.style.display = "none";
   iframeElement.style.display = "block";
+
+  let embedUrl = rawUrl;
+
+  // TeraBox లింక్ ని డైరెక్ట్ ఎంబెడ్ లింక్‌గా మార్చడం
+  if (rawUrl.includes("terabox") || rawUrl.includes("1024tera") || rawUrl.includes("freeterabox")) {
+    let surl = "";
+    if (rawUrl.includes("surl=")) {
+      surl = rawUrl.split("surl=")[1].split("&")[0];
+    } else {
+      const match = rawUrl.match(/\/s\/1?([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        surl = match[1];
+      }
+    }
+
+    if (surl) {
+      embedUrl = `https://www.terabox.app/sharing/embed?surl=${surl}`;
+    }
+  }
+
+  iframeElement.setAttribute("allow", "autoplay; encrypted-media; fullscreen; picture-in-picture");
+  iframeElement.setAttribute("allowfullscreen", "true");
   iframeElement.src = embedUrl;
 }
 
@@ -1050,5 +1063,6 @@ loadMovies();
 </script>
 </body>
 </html>
+
 
 
