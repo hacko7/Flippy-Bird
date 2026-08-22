@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,14 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{ 
-  box-sizing:border-box; 
-  margin:0; 
-  padding:0; 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
-}
+*{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
 body{ background:#05070b; color:white; }
-
 header{ height:65px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#080b10; border-bottom:1px solid #202933; position:sticky; top:0; z-index:50; }
 .logo{ color:#00a8ff; font-size:20px; font-weight:bold; }
 .logo span{ color:white; }
@@ -39,44 +32,22 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .sidebar-menu-list button{ width:100%; text-align:left; background:none; border:none; color:#e1e6eb; padding:12px 10px; border-radius:6px; font-size:15px; cursor:pointer; display:flex; align-items:center; gap:10px; }
 .sidebar-menu-list button:hover{ background:#121820; color:#00a8ff; }
 
-.category-submenu { 
-  display: none; 
-  flex-wrap: wrap; 
-  gap: 8px; 
-  padding: 10px 0 10px 10px; 
-}
+.category-submenu { display: none; flex-wrap: wrap; gap: 8px; padding: 10px 0 10px 10px; }
 .category-submenu button { 
-  font-size: 13px !important; 
-  color: white !important; 
-  background: #1e2836; 
-  border-radius: 20px !important; 
-  padding: 8px 16px !important; 
-  width: auto !important; 
-  display: inline-block !important;
-  border: 1px solid #2d3b4e !important;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  text-transform: capitalize;
+  font-size: 13px !important; color: white !important; background: #1e2836; 
+  border-radius: 20px !important; padding: 8px 16px !important; width: auto !important; 
+  display: inline-block !important; border: 1px solid #2d3b4e !important; transition: all 0.2s ease;
+  font-weight: 500; text-transform: capitalize;
 }
-.category-submenu button:hover { 
-  background: #00a8ff !important; 
-  color: white !important; 
-  border-color: #00a8ff !important;
-}
+.category-submenu button:hover { background: #00a8ff !important; color: white !important; border-color: #00a8ff !important; }
 
 .hero{ 
-  min-height:280px; 
-  display:flex; 
-  align-items:flex-end; 
-  padding:25px 18px; 
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  transition: background-image 0.5s ease-in-out;
-  background-image: linear-gradient(to top, rgba(5,7,11,1) 5%, rgba(5,7,11,0.4) 75%), linear-gradient(to right, rgba(5,7,11,1), rgba(5,7,11,0.2) 75%), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80");
+  height:280px; display:flex; align-items:flex-end; padding:25px 18px; 
+  background-position: center; background-size: cover; transition: background-image 1s ease-in-out;
+  background-image: linear-gradient(to top,#05070b 5%,transparent 75%),linear-gradient(to right,#05070b,transparent 75%),url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80");
 }
-.hero h1{ font-size:28px; margin-bottom:8px; font-weight:700; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
-.hero p{ color:#b5bdc7; font-size:14px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+.hero h1{ font-size:32px; margin-bottom:8px; }
+.hero p{ color:#b5bdc7; }
 .hero button{ margin-top:15px; padding:12px 20px; border:0; border-radius:7px; background:#00a8ff; color:white; font-weight:bold; cursor:pointer; }
 
 .section{ padding:20px 14px; }
@@ -88,7 +59,7 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .row::-webkit-scrollbar{ display:none; }
 .movie{ width:140px; min-width:140px; cursor:pointer; }
 .poster{ width:140px; height:210px; object-fit:cover; border-radius:9px; background:#111820; }
-.movieName{ margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+.movieName{ margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .movieMeta{ color:#78838e; font-size:11px; margin-top:4px; text-transform:capitalize; }
 
 .modal, .admin, .category-page{ position:fixed; inset:0; display:none; background:rgba(0,0,0,.92); z-index:100; }
@@ -110,12 +81,12 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .close-icon{ position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.7); color:white; border:0; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; z-index:10; }
 .modalContent{ padding:16px; }
 .modalContent h2{ font-size:22px; margin-bottom:6px; }
-
 .meta-tags{ display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:#00a8ff; margin-bottom:12px; }
 .meta-tags span{ background:#1a232d; padding:3px 8px; border-radius:4px; color:#aab3bd; text-transform:capitalize; }
+.modalContent p{ color:#aab3bd; line-height:1.4; font-size:13px; margin-bottom:15px; }
 
 .action-btns{ display:flex; gap:10px; margin-bottom:20px; }
-.btn-action{ flex:1; padding:12px; border:0; border-radius:7px; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; text-align:center; }
+.btn-action{ flex:1; padding:12px; border:0; border-radius:7px; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; }
 .watch-btn{ background:#00a8ff; color:white; }
 .watchlist-btn{ background:#29323c; color:white; }
 
@@ -126,7 +97,7 @@ header{ height:65px; display:flex; align-items:center; justify-content:space-bet
 .similar-poster{ width:100%; height:140px; object-fit:cover; border-radius:6px; background:#18212b; }
 .similar-name{ font-size:11px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#cbd5e1; }
 
-.playlist-item{ display:flex; align-items:center; justify-content:between; background:#111820; padding:10px 14px; margin-top:8px; border-radius:8px; border:1px solid #1a232d; }
+.playlist-item{ display:flex; align-items:center; justify-content:space-between; background:#111820; padding:10px 14px; margin-top:8px; border-radius:8px; border:1px solid #1a232d; }
 .playlist-title{ font-size:14px; font-weight:bold; }
 .delete-btn{ background:#e53935; color:white; border:0; padding:6px 10px; border-radius:5px; cursor:pointer; font-size:12px; }
 
@@ -239,27 +210,29 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
   <div id="categoryGrid" class="grid-container"></div>
 </div>
 
+<!-- MOVIE MODAL (WITH IN-SITE DOODSTREAM PLAYER) -->
 <div id="movieModal" class="modal">
   <div class="modalBox">
     <button class="close-icon" onclick="closeMovie()">✕</button>
 
     <div class="modalMediaContainer">
       <img id="modalImage" class="modalImage" src="">
-      <iframe id="modalTrailerFrame" class="modalIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+      <!-- Doodstream and Trailers will play in this iframe -->
+      <iframe id="modalTrailerFrame" class="modalIframe" src="" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
     </div>
 
     <div class="modalContent">
       <h2 id="modalTitle"></h2>
-      
       <div class="meta-tags">
-        <span id="modalWatchIn">HD Quality</span>
-        <span id="modalYear">2026</span>
-        <span id="modalLanguage">Telugu</span>
+        <span>HD Quality</span>
         <span id="modalCategory">Movie</span>
+        <span id="modalLanguage">Telugu</span>
+        <span id="modalYear">2026</span>
       </div>
+      <p id="modalDescription"></p>
 
       <div class="action-btns">
-        <a id="watchMovieAnchor" class="btn-action watch-btn" href="javascript:void(0)" onclick="handleWatchClick()">▶ Watch Now</a>
+        <button class="btn-action watch-btn" onclick="openLink()">▶ Watch Movie</button>
         <button class="btn-action watchlist-btn" id="watchlistToggleBtn" onclick="toggleWatchlist()">+ Watchlist</button>
       </div>
 
@@ -295,23 +268,16 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
         <span id="iconBanner" class="accordion-icon">▼</span>
       </div>
       <div id="secBanner" class="accordion-body">
-        <input type="hidden" id="editBannerId">
         <div class="group"><label>Banner Title</label><input id="bannerTitle" placeholder="Banner movie/show title"></div>
-        <div class="group"><label>Banner Link (OTT or Video link)</label><input id="bannerLink" placeholder="Paste OTT / Video link here..."></div>
-        
-        <div class="group">
-          <label>Watch In (e.g. Netflix, Aha, MX Player, TeraBox)</label>
-          <input id="bannerWatchIn" placeholder="Enter platform name...">
-        </div>
-
-        <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
+        <div class="group"><label>Banner Description</label><textarea id="bannerDescription" placeholder="Banner description"></textarea></div>
+        <div class="group"><label>DoodStream Embed Link (https://dood.to/e/...)</label><input id="bannerLink" placeholder="Paste Doodstream embed URL"></div>
+        <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="bannerTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Select New Hero Banner Image</label>
           <input id="bannerImage" type="file" accept="image/*">
           <img id="bannerPreview" class="banner-preview">
         </div>
-        <button id="saveBannerBtn" class="updateBannerBtn" onclick="addOrUpdateBanner()">🖼️ Add Banner Slide</button>
-        <button id="cancelBannerEditBtn" class="cancelBtn" onclick="resetBannerForm()">✕ Cancel Edit</button>
+        <button class="updateBannerBtn" onclick="updateBanner()">🖼️ Add Banner Slide</button>
       </div>
     </div>
 
@@ -335,21 +301,12 @@ footer{ text-align:center; color:#626d77; padding:30px; font-size:12px; }
           </div>
         </div>
 
-        <div class="group">
-          <label>Video Link (Netflix, Prime, Aha, Hotstar, TeraBox, Drive, etc.)</label>
-          <input id="movieLink" placeholder="Paste OTT or Video link here...">
-        </div>
-
-        <div class="group">
-          <label>Watch In (e.g. Netflix, Aha, MX Player, TeraBox)</label>
-          <input id="movieWatchIn" placeholder="Enter platform name...">
-        </div>
-
-        <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="https://youtube.com/watch?v=XXXX or Video ID"></div>
-        
+        <div class="group"><label>Description</label><textarea id="movieDescription" placeholder="Movie description"></textarea></div>
+        <div class="group"><label>Doodstream Embed Link (e.g. https://dood.to/e/...)</label><input id="movieLink" placeholder="https://dood.to/e/xxxxxxxx"></div>
+        <div class="group"><label>YouTube Trailer Link / ID (Optional)</label><input id="movieTrailer" placeholder="YouTube Trailer Link"></div>
         <div class="group">
           <label>Category Name</label>
-          <input id="movieCategory" placeholder="e.g. trending, new released, action, horror...">
+          <input id="movieCategory" placeholder="e.g. trending, new released, action...">
         </div>
         <div class="group">
           <label>Select Poster Photo</label>
@@ -507,12 +464,12 @@ function applyBannerMovie(movieData){
   
   const bgUrl = movieData.hero_banner || movieData.thumbnail_url;
   if(bgUrl) {
-    hero.style.backgroundImage = `linear-gradient(to top, rgba(5,7,11,1) 5%, rgba(5,7,11,0.4) 75%), linear-gradient(to right, rgba(5,7,11,1), rgba(5,7,11,0.2) 75%), url("${bgUrl}")`;
+    hero.style.backgroundImage = `linear-gradient(to top,#05070b 5%,transparent 75%),linear-gradient(to right,#05070b,transparent 75%),url("${bgUrl}")`;
   }
   
   if(movieData.title) {
     heroTitle.textContent = movieData.title;
-    heroDesc.textContent = [movieData.language, movieData.year].filter(Boolean).join(" • ") || "Watch your favorite movies and videos.";
+    heroDesc.textContent = movieData.description || "Watch your favorite movies and videos.";
   }
 }
 
@@ -526,106 +483,49 @@ function watchCurrentBanner(){
   }
 }
 
-function resetBannerForm() {
-  document.getElementById("editBannerId").value = "";
-  document.getElementById("bannerTitle").value = "";
-  document.getElementById("bannerLink").value = "";
-  document.getElementById("bannerWatchIn").value = "";
-  document.getElementById("bannerTrailer").value = "";
-  document.getElementById("bannerImage").value = "";
-  document.getElementById("bannerPreview").style.display = "none";
-
-  document.getElementById("saveBannerBtn").textContent = "🖼️ Add Banner Slide";
-  document.getElementById("cancelBannerEditBtn").style.display = "none";
-}
-
-function startEditBanner(id) {
-  const item = allDbItems.find(m => String(m.id) === String(id));
-  if(!item) return;
-
-  document.getElementById("editBannerId").value = item.id;
-  document.getElementById("bannerTitle").value = item.title || "";
-  document.getElementById("bannerLink").value = item.terabox_url || "";
-  document.getElementById("bannerWatchIn").value = item.watch_in || "";
-  document.getElementById("bannerTrailer").value = item.trailer_url || "";
-
-  const preview = document.getElementById("bannerPreview");
-  preview.src = item.thumbnail_url;
-  preview.style.display = "block";
-
-  document.getElementById("saveBannerBtn").textContent = "💾 Update Banner Slide";
-  document.getElementById("cancelBannerEditBtn").style.display = "block";
-
-  const secBanner = document.getElementById("secBanner");
-  const iconBanner = document.getElementById("iconBanner");
-  secBanner.style.display = "block";
-  iconBanner.textContent = "▲";
-  secBanner.scrollIntoView({ behavior: 'smooth' });
-}
-
-async function addOrUpdateBanner(){
-  const editId = document.getElementById("editBannerId").value;
+async function updateBanner(){
   const title = document.getElementById("bannerTitle").value.trim() || "Featured Banner";
+  const description = document.getElementById("bannerDescription").value.trim();
   const link = document.getElementById("bannerLink").value.trim() || "#";
-  const watchIn = document.getElementById("bannerWatchIn").value.trim();
   const trailer = document.getElementById("bannerTrailer").value.trim();
   const file = document.getElementById("bannerImage").files[0];
 
-  if(!editId && !file){
+  if(!file){
     alert("Please select a new banner image.");
     return;
   }
 
   try {
-    let bannerUrl = null;
-    if(file){
-      document.getElementById("status").textContent = "Uploading banner...";
-      const extension = file.name.split(".").pop();
-      const filename = "hero-banner-" + Date.now() + "." + extension;
+    document.getElementById("status").textContent = "Uploading banner...";
+    const extension = file.name.split(".").pop();
+    const filename = "hero-banner-" + Date.now() + "." + extension;
 
-      const upload = await db.storage.from("posters").upload(filename, file, {upsert: true});
-      if(upload.error) throw upload.error;
+    const upload = await db.storage.from("posters").upload(filename, file, {upsert: true});
+    if(upload.error) throw upload.error;
 
-      bannerUrl = db.storage.from("posters").getPublicUrl(filename).data.publicUrl;
-    }
+    const bannerUrl = db.storage.from("posters").getPublicUrl(filename).data.publicUrl;
+    
+    document.getElementById("status").textContent = "Saving to Database...";
 
-    if(editId) {
-      document.getElementById("status").textContent = "Updating banner...";
-      const existingItem = allDbItems.find(m => String(m.id) === String(editId));
-      const updatedUrl = bannerUrl || (existingItem ? existingItem.thumbnail_url : "");
+    const insertResult = await db.from("movies").insert({
+      title: title,
+      description: description,
+      thumbnail_url: bannerUrl,
+      hero_banner: bannerUrl,
+      terabox_url: link,
+      trailer_url: trailer,
+      category: "banner"
+    });
 
-      const updateData = {
-        title: title,
-        description: "",
-        thumbnail_url: updatedUrl,
-        hero_banner: updatedUrl,
-        terabox_url: link,
-        watch_in: watchIn,
-        trailer_url: trailer,
-        category: "banner"
-      };
+    if(insertResult.error) throw insertResult.error;
 
-      const { error } = await db.from("movies").update(updateData).eq("id", editId).select();
-      if(error) throw error;
-      document.getElementById("status").textContent = "✅ Banner Updated Successfully!";
-    } else {
-      document.getElementById("status").textContent = "Saving to Database...";
-      const { error } = await db.from("movies").insert({
-        title: title,
-        description: "",
-        thumbnail_url: bannerUrl,
-        hero_banner: bannerUrl,
-        terabox_url: link,
-        watch_in: watchIn,
-        trailer_url: trailer,
-        category: "banner"
-      });
-
-      if(error) throw error;
-      document.getElementById("status").textContent = "✅ Banner Added Successfully!";
-    }
-
-    resetBannerForm();
+    document.getElementById("status").textContent = "✅ Banner Added Successfully!";
+    document.getElementById("bannerTitle").value = "";
+    document.getElementById("bannerDescription").value = "";
+    document.getElementById("bannerLink").value = "";
+    document.getElementById("bannerTrailer").value = "";
+    document.getElementById("bannerImage").value = "";
+    document.getElementById("bannerPreview").style.display = "none";
     await loadMovies();
   } catch(error) {
     console.error(error);
@@ -705,6 +605,7 @@ function showAllHomeMovies(){
   renderMovies();
 }
 
+/* FIXED CATEGORY ORDER: 1. TRENDING, 2. NEW RELEASED */
 function renderMovies(){
   const container = document.getElementById("dynamicCategoriesContainer");
   container.innerHTML = "";
@@ -821,8 +722,8 @@ function startEditMovie(id) {
   document.getElementById("movieTitle").value = item.title || "";
   document.getElementById("movieLanguage").value = item.language || "";
   document.getElementById("movieYear").value = item.year || "";
+  document.getElementById("movieDescription").value = item.description || "";
   document.getElementById("movieLink").value = item.terabox_url || "";
-  document.getElementById("movieWatchIn").value = item.watch_in || "";
   document.getElementById("movieTrailer").value = item.trailer_url || "";
   document.getElementById("movieCategory").value = item.category || "";
 
@@ -846,12 +747,12 @@ function resetMovieForm() {
   document.getElementById("movieTitle").value = "";
   document.getElementById("movieLanguage").value = "";
   document.getElementById("movieYear").value = "";
+  document.getElementById("movieDescription").value = "";
   document.getElementById("movieLink").value = "";
-  document.getElementById("movieWatchIn").value = "";
   document.getElementById("movieTrailer").value = "";
   document.getElementById("movieCategory").value = "";
   document.getElementById("movieImage").value = "";
-
+  
   const preview = document.getElementById("preview");
   preview.src = "";
   preview.style.display = "none";
@@ -866,14 +767,14 @@ async function addOrUpdateMovie(){
   const title = document.getElementById("movieTitle").value.trim();
   const language = document.getElementById("movieLanguage").value.trim();
   const year = document.getElementById("movieYear").value.trim();
+  const description = document.getElementById("movieDescription").value.trim();
   const link = document.getElementById("movieLink").value.trim();
-  const watchIn = document.getElementById("movieWatchIn").value.trim();
   const trailer = document.getElementById("movieTrailer").value.trim();
   const category = document.getElementById("movieCategory").value.trim().toLowerCase() || "general";
   const file = document.getElementById("movieImage").files[0];
 
   if(!title || !link){
-    alert("Please enter movie title and Video link.");
+    alert("Please enter movie title and Doodstream Embed Link.");
     return;
   }
 
@@ -898,6 +799,7 @@ async function addOrUpdateMovie(){
 
     if(editId) {
       document.getElementById("status").textContent = "Updating movie details...";
+      
       const existingItem = allDbItems.find(m => String(m.id) === String(editId));
       const updatedUrl = publicURL || (existingItem ? existingItem.thumbnail_url : "");
 
@@ -905,29 +807,28 @@ async function addOrUpdateMovie(){
         title: title,
         language: language,
         year: year,
-        description: "",
+        description: description,
         thumbnail_url: updatedUrl,
         hero_banner: updatedUrl,
         terabox_url: link,
-        watch_in: watchIn,
         trailer_url: trailer,
         category: category
       };
 
-      const { error } = await db.from("movies").update(updateData).eq("id", editId).select();
+      const { data, error } = await db.from("movies").update(updateData).eq("id", editId).select();
+
       if(error) throw error;
       document.getElementById("status").textContent = "✅ Movie Updated Successfully!";
     } else {
       document.getElementById("status").textContent = "Saving movie...";
-      const { error } = await db.from("movies").insert({
+      const { data, error } = await db.from("movies").insert({
         title: title,
         language: language,
         year: year,
-        description: "",
+        description: description,
         thumbnail_url: publicURL,
         hero_banner: publicURL,
         terabox_url: link,
-        watch_in: watchIn,
         trailer_url: trailer,
         category: category
       }).select();
@@ -957,16 +858,15 @@ function renderAdmin(itemsList){
     const div = document.createElement("div");
     div.className = "adminItem";
     const subMeta = [item.language, item.year].filter(Boolean).join(" | ");
-    const isBanner = item.category === "banner";
     
     div.innerHTML = `
       <img class="adminThumb" src="${item.thumbnail_url}">
       <div class="adminInfo">
         <strong>${escapeHTML(item.title)}</strong><br>
-        <small style="color:#aab3bd;">${isBanner ? "🖼️ BANNER SLIDE" : escapeHTML(item.category)}${subMeta ? ' • ' + escapeHTML(subMeta) : ''}</small>
+        <small style="color:#aab3bd;">${item.category === "banner" ? "🖼️ BANNER SLIDE" : escapeHTML(item.category)}${subMeta ? ' • ' + escapeHTML(subMeta) : ''}</small>
       </div>
       <div class="adminBtns">
-        <button class="editBtn" onclick="${isBanner ? `startEditBanner('${item.id}')` : `startEditMovie('${item.id}')`}">Edit</button>
+        <button class="editBtn" onclick="startEditMovie('${item.id}')">Edit</button>
         <button class="delete" onclick="deleteItem('${item.id}')">Delete</button>
       </div>
     `;
@@ -999,7 +899,8 @@ function openMovie(movie){
   
   document.getElementById("modalLanguage").textContent = movie.language || "Telugu";
   document.getElementById("modalYear").textContent = movie.year || "2026";
-  document.getElementById("modalWatchIn").textContent = movie.watch_in || "HD Quality";
+  
+  document.getElementById("modalDescription").textContent = movie.description || "No description available.";
   
   const imgElement = document.getElementById("modalImage");
   const iframeElement = document.getElementById("modalTrailerFrame");
@@ -1015,6 +916,7 @@ function openMovie(movie){
     youtubeId = rawTrailer.trim();
   }
 
+  // If YouTube trailer exists, load it first in iframe
   if(youtubeId){
     imgElement.style.display = "none";
     iframeElement.style.display = "block";
@@ -1026,9 +928,6 @@ function openMovie(movie){
     imgElement.src = movie.thumbnail_url;
   }
 
-  const watchAnchor = document.getElementById("watchMovieAnchor");
-  watchAnchor.innerHTML = `▶ Watch Now`;
-
   updateWatchlistBtn();
   renderSimilarMovies(movie);
 
@@ -1037,62 +936,21 @@ function openMovie(movie){
   modal.querySelector('.modalBox').scrollTop = 0;
 }
 
-function handleWatchClick(){
-  if(!selectedMovie || !selectedMovie.terabox_url){
-    alert("No video link provided.");
+// IN-SITE PLAYBACK FOR DOODSTREAM AND EMBED LINKS
+function openLink(){ 
+  if(!selectedMovie || !selectedMovie.terabox_url) {
+    alert("No stream URL available.");
     return;
   }
 
-  let url = selectedMovie.terabox_url;
+  const embedUrl = selectedMovie.terabox_url;
   const iframeElement = document.getElementById("modalTrailerFrame");
   const imgElement = document.getElementById("modalImage");
 
-  if(url.includes("vimeo.com")){
-    const videoId = url.split("/").pop().split("?")[0];
-    const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
-    imgElement.style.display = "none";
-    iframeElement.style.display = "block";
-    iframeElement.src = embedUrl;
-  } 
-  else if(url.includes("dailymotion.com") || url.includes("dai.ly")){
-    let videoId = "";
-    if(url.includes("dailymotion.com/video/")){
-      videoId = url.split("dailymotion.com/video/")[1].split("/")[0].split("?")[0];
-    } else if(url.includes("dai.ly/")){
-      videoId = url.split("dai.ly/")[1].split("?")[0];
-    }
-    if(videoId){
-      const embedUrl = `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1`;
-      imgElement.style.display = "none";
-      iframeElement.style.display = "block";
-      iframeElement.src = embedUrl;
-    } else {
-      window.location.href = url;
-    }
-  }
-  else if(url.includes("archive.org")){
-    let embedUrl = url;
-    if(!url.includes("/embed/")){
-      embedUrl = url.replace("/details/", "/embed/");
-    }
-    imgElement.style.display = "none";
-    iframeElement.style.display = "block";
-    iframeElement.src = embedUrl;
-  }
-  else if(url.includes("drive.google.com")){
-    let embedUrl = url;
-    if(url.includes("/view")) {
-      embedUrl = url.replace("/view", "/preview");
-    } else if(!url.includes("/preview")) {
-      embedUrl = url + (url.endsWith("/") ? "" : "/") + "preview";
-    }
-    imgElement.style.display = "none";
-    iframeElement.style.display = "block";
-    iframeElement.src = embedUrl;
-  } 
-  else {
-    window.location.href = url;
-  }
+  // Load the Doodstream / Embed Link directly inside Modal Frame
+  imgElement.style.display = "none";
+  iframeElement.style.display = "block";
+  iframeElement.src = embedUrl;
 }
 
 function renderSimilarMovies(currentMovie){
@@ -1204,3 +1062,4 @@ loadMovies();
 </script>
 </body>
 </html>
+
