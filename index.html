@@ -11,6 +11,9 @@
     header { background: #1e293b; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     header h1 { font-size: 24px; color: #38bdf8; letter-spacing: 1px; }
 
+    .search-bar { padding: 15px 20px; background: #1e293b; display: flex; justify-content: center; border-bottom: 1px solid #334155; }
+    .search-bar input { width: 100%; max-width: 600px; padding: 10px 15px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; outline: none; }
+
     .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
 
     /* Movie Cards */
@@ -41,6 +44,10 @@
     <h1>HACKO MOVIES</h1>
   </header>
 
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search movies..." onkeyup="filterMovies()">
+  </div>
+
   <div class="container">
     <div class="movie-grid" id="movieGrid">
       <!-- Dynamic Movies list generated via JS -->
@@ -65,12 +72,12 @@
   </div>
 
   <script>
-    // Database / Admin Panel నుండి పొందే డేటా
+    // మీ ఒరిజినల్ మూవీస్ డేటా 
     const moviesData = [
       {
         id: 1,
         title: "Spider-Man",
-        poster: "https://via.placeholder.com/300x450/1e293b/ffffff?text=Spider-Man",
+        poster: "https://image.tmdb.org/t/p/w500/gh4cZbhZxyTbgxQPXD0dOudNPTn.jpg", // ఒరిజినల్ పోస్టర్ లింక్
         terabox_url: "BAACAgUAAxkBAAEt5M9qiayD4fTdxhRzGWUuPhu84B_xAAGcx4AAm-vSVSqmjOwVjK5BDOE" // Telegram File ID
       }
     ];
@@ -78,11 +85,16 @@
     let selectedMovie = null;
 
     // Load Movies onto page
-    function loadMovies() {
+    function loadMovies(data = moviesData) {
       const grid = document.getElementById("movieGrid");
       grid.innerHTML = "";
       
-      moviesData.forEach(movie => {
+      if(data.length === 0) {
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #94a3b8;'>No movies found.</p>";
+        return;
+      }
+
+      data.forEach(movie => {
         const card = document.createElement("div");
         card.className = "movie-card";
         card.onclick = () => openModal(movie);
@@ -94,6 +106,13 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    // Search Filter Function
+    function filterMovies() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = moviesData.filter(movie => movie.title.toLowerCase().includes(query));
+      loadMovies(filtered);
     }
 
     // Open Movie Modal
@@ -118,7 +137,7 @@
       iframe.src = "";
     }
 
-    // STREAMING FUNCTION (Vercel Telegram Streamer)
+    // STREAMING FUNCTION (Vercel Telegram Streamer Support)
     function openLink() {
       if (!selectedMovie || !selectedMovie.terabox_url) {
         alert("No video File ID available.");
@@ -149,6 +168,7 @@
   </script>
 </body>
 </html>
+
 
 
 
